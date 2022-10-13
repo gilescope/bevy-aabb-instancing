@@ -19,23 +19,32 @@ pub type Color = u32;
 pub type MetaBits = u32;
 
 /// An axis-aligned box, extending from `minimum` to `maximum`.
-#[derive(Clone, Copy, Debug, ShaderType)]
+#[derive(Clone, Copy, Debug, ShaderType, Default)]
 #[repr(C)]
 pub struct Cuboid {
-    pub minimum: Vec3,
+    pub minimum_x: f32,
+    pub minimum_y: f32,
+    pub minimum_z: f32,
     pub meta_bits: MetaBits,
-    pub maximum: Vec3,
+    pub maximum_x: f32,
+    pub maximum_y: f32,
+    pub maximum_z: f32,
     pub color: Color,
 }
 
 impl Cuboid {
     pub fn new(minimum: Vec3, maximum: Vec3, color: u32, visible: bool, depth_bias: u16) -> Self {
         assert_eq!(std::mem::size_of::<Cuboid>(), 32);
+        assert_eq!(std::mem::size_of::<[Cuboid;1]>(), 32);
         let mut me = Self {
-            minimum,
+            minimum_x: minimum.x,
+            minimum_y: minimum.y,
+            minimum_z: minimum.z,
             meta_bits: 0,
-            maximum,
-            color,
+            maximum_x: maximum.x,
+            maximum_y: maximum.y,
+            maximum_z: maximum.z,
+            color: color.clone(),
         };
         if visible {
             me.make_visible();
@@ -64,26 +73,34 @@ impl Cuboid {
 }
 
 /// A set of cuboids to be extracted for rendering.
-#[derive(Clone, Component, Debug, Default)]
+#[derive(Clone, Component, Debug)]
 pub struct Cuboids {
     /// Instances to be rendered.
-    pub instances: Vec<Cuboid>,
+    pub instances: [Cuboid;1],
 }
 
 impl Cuboids {
     pub fn new(instances: Vec<Cuboid>) -> Self {
-        Self { instances }
+        Self { instances: [instances[0]] }//TODO
     }
 
     /// Automatically creates an [`Aabb`] that bounds all `instances`.
     pub fn aabb(&self) -> Aabb {
-        let mut min = Vec3::splat(f32::MAX);
-        let mut max = Vec3::splat(f32::MIN);
+        let mut min_x = f32::MAX;
+        let mut max_x = f32::MIN;
+        let mut min_y = f32::MAX;
+        let mut max_y = f32::MIN;
+        let mut min_z = f32::MAX;
+        let mut max_z = f32::MIN;
         for i in self.instances.iter() {
-            min = min.min(i.minimum);
-            max = max.max(i.maximum);
+            min_x = min_x.min(i.minimum_x);
+            max_x = max_x.max(i.maximum_x);
+            min_y = min_y.min(i.minimum_y);
+            max_y = max_y.max(i.maximum_y);
+            min_z = min_z.min(i.minimum_z);
+            max_z = max_z.max(i.maximum_z);
         }
-        Aabb::from_min_max(min, max)
+        Aabb::from_min_max(Vec3::new(min_x,min_y, min_z), Vec3::new(max_x,max_y, max_z))
     }
 }
 

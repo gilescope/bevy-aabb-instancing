@@ -43,9 +43,9 @@ impl Plugin for VertexPullingRenderPlugin {
             render_app.insert_resource(msaa);
         }
         let mut shader_defs = CuboidsShaderDefs::default();
-        if self.outlines {
-            shader_defs.enable_outlines();
-        }
+        // if self.outlines {
+        //     shader_defs.enable_outlines();
+        // }
         render_app.insert_resource(shader_defs);
 
         render_app

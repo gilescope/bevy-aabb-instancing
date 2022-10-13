@@ -30,8 +30,12 @@ pub struct ClippingPlaneBundle {
 
 #[derive(Clone, Component, Debug, Default, ShaderType)]
 pub(crate) struct GpuClippingPlaneRange {
-    pub origin: Vec3,
-    pub unit_normal: Vec3,
+    pub origin_x: f32,
+    pub origin_y: f32,
+    pub origin_z: f32,
+    pub unit_normal_x: f32,
+    pub unit_normal_y: f32,
+    pub unit_normal_z: f32,
     pub min_sdist: f32,
     pub max_sdist: f32,
 }

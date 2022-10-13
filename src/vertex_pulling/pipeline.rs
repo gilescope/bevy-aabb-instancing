@@ -1,6 +1,6 @@
 use crate::clipping_planes::GpuClippingPlaneRanges;
 use crate::{cuboids::CuboidsTransform, ColorOptions};
-
+ use core::num::NonZeroU64;
 use bevy::{
     prelude::*,
     reflect::TypeUuid,
@@ -99,10 +99,13 @@ impl FromWorld for CuboidsPipeline {
             entries: &[BindGroupLayoutEntry {
                 binding: 0,
                 visibility: ShaderStages::VERTEX,
-                ty: BindingType::Buffer {
-                    ty: BufferBindingType::Storage { read_only: true },
-                    has_dynamic_offset: false,
-                    min_binding_size: BufferSize::new(0),
+                ty: BindingType::Buffer {                    
+                    // ty: BufferBindingType::Storage { read_only: true },
+                     ty: BufferBindingType::Uniform,
+                    has_dynamic_offset: true,
+                    min_binding_size: //Some(NonZeroU64::try_from(32).unwrap()) //
+                    BufferSize::new(0)
+                    ,
                 },
                 count: None,
             }],

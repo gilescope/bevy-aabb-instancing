@@ -1,8 +1,8 @@
 use crate::Cuboid;
-
+use bevy::render::render_resource::UniformBuffer;
 use bevy::{
     prelude::*,
-    render::render_resource::{BindGroup, StorageBuffer},
+    render::render_resource::{BindGroup},
     utils::HashMap,
 };
 
@@ -17,7 +17,7 @@ pub(crate) struct CachedCuboidBuffers {
     pub dirty: bool,
     pub enabled: bool,
     pub keep_alive: bool,
-    pub instance_buffer: StorageBuffer<Vec<Cuboid>>,
+    pub instance_buffer: UniformBuffer<[Cuboid;1]>,
     pub instance_buffer_bind_group: Option<BindGroup>,
     pub position: Vec3,
     pub transform_index: u32,
